@@ -65,7 +65,7 @@ const mod = registration.factory((spec) => {
   throw new Error(`unexpected require("${spec}")`)
 })
 
-const { parseBody, insideMath, matchTrigger, nextStop, handleKeydown, handleKeyup, DEFAULT_SNIPPETS } = mod.internals
+const { parseBody, insideMath, matchTrigger, mergeTable, nextStop, handleKeydown, handleKeyup, DEFAULT_SNIPPETS } = mod.internals
 
 /**
  * A fake composer holding exactly the state the shell publishes to a plugin.
@@ -633,6 +633,35 @@ test('the default table is self-consistent', () => {
   }
   assert.equal(parseBody(DEFAULT_SNIPPETS.ff.body).hole, 6)
   assert.equal(parseBody(DEFAULT_SNIPPETS.mk.body).text, '$$')
+})
+
+//#endregion
+
+//#region the served table folded over the bundle's copy
+
+test('a body-only override keeps the built-in switches', () => {
+  const served = { mk: { body: '$$1$$', desc: 'inline math' }, '//': { body: '\\frac{$1}{$2}' } }
+  const merged = mergeTable(DEFAULT_SNIPPETS, served)
+  assert.equal(merged.mk.body, '$$1$$', 'the body is the served one')
+  assert.equal(merged.mk.open, true, 'but the built-in open switch survives')
+  assert.equal(merged['//'].auto, true, 'and so does the auto switch, which is what lets // fire with no Tab')
+})
+
+test('an explicit flag wins, and unknown tags are added', () => {
+  const merged = mergeTable(DEFAULT_SNIPPETS, {
+    '//': { body: '\\dfrac{$1}{$2}', auto: false },
+    npv: { body: '\\mathrm{NPV}_{$1}' }
+  })
+  assert.equal(merged['//'].auto, false, 'a user can turn a built-in switch off')
+  assert.equal(merged['//'].body, '\\dfrac{$1}{$2}')
+  assert.equal(merged.npv.body, '\\mathrm{NPV}_{$1}')
+  assert.equal(merged.sum, DEFAULT_SNIPPETS.sum, 'untouched entries are kept by reference')
+})
+
+test('an entry with no usable body is skipped', () => {
+  const merged = mergeTable(DEFAULT_SNIPPETS, { ff: { desc: 'no body' }, '//': { body: '' } })
+  assert.equal(merged.ff, DEFAULT_SNIPPETS.ff)
+  assert.equal(merged['//'].auto, true)
 })
 
 //#endregion

@@ -65,7 +65,9 @@ Example — add your own:
 }
 ```
 
-A tag in the file overrides the built-in of the same name.
+A tag in the file overrides the built-in of the same name **field by field**, so an entry that
+only restates a `body` keeps the built-in's `open` and `auto` switches — and an explicit
+`"auto": false` turns one off.
 
 ### Two kinds of tag
 
@@ -148,7 +150,7 @@ Loopback `Host` only.
 npm test
 ```
 
-56 assertions, no harness and no browser. Two layers: the keystroke paths run against a fake
+59 assertions, no harness and no browser. Two layers: the keystroke paths run against a fake
 composer that mirrors the shell's span semantics (span replacement, caret after the
 insertion, collapsed inserts, stale-revision refusal), so the two-step hole placement and the
 hole walk are asserted at the level that matters — the resulting text **and** where the caret

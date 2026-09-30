@@ -519,6 +519,45 @@ function handleKeyup(event, deps) {
 
 //#region Component
 
+/**
+ * Fold a served table over the bundle's own copy, entry by entry.
+ *
+ * A served entry replaces the built-in of the same tag *field by field* rather
+ * than wholesale. That matters because the common edit is to restate only a
+ * body: a wholesale replace would silently drop the built-in's `open` or `auto`
+ * switch, so a body-only override of `mk` would quietly stop working outside
+ * math.
+ *
+ * @param base - the bundle's own table.
+ * @param served - the table from the host route.
+ * @returns a fresh table.
+ */
+function mergeTable(base, served) {
+  var out = {}
+  var tag
+  for (tag in base) {
+    if (Object.prototype.hasOwnProperty.call(base, tag)) out[tag] = base[tag]
+  }
+  for (tag in served) {
+    if (!Object.prototype.hasOwnProperty.call(served, tag)) continue
+    var entry = served[tag]
+    if (entry === null || entry === undefined || typeof entry.body !== "string") continue
+    var merged = {}
+    var inherited = out[tag]
+    var field
+    if (inherited !== undefined) {
+      for (field in inherited) {
+        if (Object.prototype.hasOwnProperty.call(inherited, field)) merged[field] = inherited[field]
+      }
+    }
+    for (field in entry) {
+      if (Object.prototype.hasOwnProperty.call(entry, field)) merged[field] = entry[field]
+    }
+    out[tag] = merged
+  }
+  return out
+}
+
 /** Fetch the effective table, falling back to the bundle's copy. */
 function loadTable(onTable) {
   try {
@@ -526,7 +565,7 @@ function loadTable(onTable) {
       .then(function (response) { return response.ok ? response.json() : null })
       .then(function (payload) {
         var snippets = payload !== null && payload !== undefined ? payload.snippets : undefined
-        if (snippets !== null && typeof snippets === "object") onTable(snippets)
+        if (snippets !== null && typeof snippets === "object") onTable(mergeTable(DEFAULT_SNIPPETS, snippets))
       })
       .catch(function () {})
   } catch (error) {
@@ -665,6 +704,7 @@ exports.internals = {
   insideMath: insideMath,
   matchTrigger: matchTrigger,
   parseBody: parseBody,
+  mergeTable: mergeTable,
   nextStop: nextStop,
   handleKeydown: handleKeydown,
   handleKeyup: handleKeyup,

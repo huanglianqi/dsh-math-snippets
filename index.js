@@ -147,8 +147,8 @@ export function readUserSnippets() {
     if (typeof body !== 'string' || body === '') continue
     out[tag] = {
       body,
-      ...value !== null && typeof value === 'object' && value.open === true ? { open: true } : {},
-      ...value !== null && typeof value === 'object' && value.auto === true ? { auto: true } : {},
+      ...value !== null && typeof value === 'object' && typeof value.open === 'boolean' ? { open: value.open } : {},
+      ...value !== null && typeof value === 'object' && typeof value.auto === 'boolean' ? { auto: value.auto } : {},
       ...value !== null && typeof value === 'object' && typeof value.desc === 'string' ? { desc: value.desc } : {}
     }
   }

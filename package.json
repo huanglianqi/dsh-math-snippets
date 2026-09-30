@@ -1,6 +1,6 @@
 {
   "name": "dsh-math-snippets",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "LaTeX snippet expansion in the DSH web composer: Tab expands a short trigger into a formula template and drops the caret into the first hole, then walks the rest.",
   "type": "module",
   "license": "MIT",
