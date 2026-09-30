@@ -1,0 +1,52 @@
+{
+  "name": "dsh-math-snippets",
+  "version": "1.2.0",
+  "description": "LaTeX snippet expansion in the DSH web composer: Tab expands a short trigger into a formula template and drops the caret into the first hole, then walks the rest.",
+  "type": "module",
+  "license": "MIT",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.1.5-rc.1"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "client.js",
+    "cordis.patch.yml",
+    "index.js",
+    "package.json",
+    "test.mjs"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "latex",
+    "snippet",
+    "composer"
+  ],
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huanglianqi/dsh-math-snippets.git"
+  },
+  "homepage": "https://github.com/huanglianqi/dsh-math-snippets#readme",
+  "bugs": {
+    "url": "https://github.com/huanglianqi/dsh-math-snippets/issues"
+  }
+}

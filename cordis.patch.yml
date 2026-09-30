@@ -1,0 +1,7 @@
+# The bundle layer for this plugin: a profile that lists this package in
+# `dsh.profile.bundles` inserts this row at boot. The row names the package
+# rather than a path, because a bundle layer resolves every row name against
+# the bundle's own directory.
+- insert:
+    - id: math-snippets
+      name: dsh-math-snippets
