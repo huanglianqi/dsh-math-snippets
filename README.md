@@ -50,6 +50,7 @@ snippet. **142 tags, 138 of them auto, 4 left on Tab.**
 | Same | the trigger vocabulary (`//`, `@a`, `sr`, `cb`, `rd`, `_`, `**`, `->`, `<=`, `>=`, `!=`, `oo`, `sum`, `lim`, `dint`, `hat`, `bar`, `vec`, `norm`, `ceil`, `floor`, `text`, …), which triggers are **auto** and which need Tab, `w` word-boundary flags, and the `$0`,`$1`,`$2` tabstop order |
 | Same | the `${1:\infty}` placeholder syntax parses (the default text is dropped — see below) |
 | Different | the four LaTeX Suite deliberately keeps on <kbd>Tab</kbd> — `par`, `\sum`, `\prod`, `\int` — stay on Tab here too, which is the point |
+| Different | `dm` does not prepend the newline LaTeX Suite's does. In a note you always want display math on a line of its own; in a chat composer the common case is that you are already on an empty line, and that newline would leave a blank first paragraph |
 | Different | no *conceal/render* of formulas while typing, no auto-enlarging brackets, no backwards expansion, no regex/visual/function snippets, and `${1:x}` placeholder text is not preselected: the shell publishes no selection seam, so a hole is empty instead |
 
 ## Snippet table
