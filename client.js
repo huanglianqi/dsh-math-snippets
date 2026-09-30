@@ -49,54 +49,148 @@ var MAX_TRIGGER = 12
  * editable `~/.dsh/math-snippets.json`.
  */
 var DEFAULT_SNIPPETS = {
-  mk: { body: "$$1$", open: true, desc: "inline math" },
-  dm: { body: "$$\n$1\n$$", open: true, desc: "display math" },
-  ff: { body: "\\frac{$1}{$2}", desc: "fraction" },
-  "//": { body: "\\frac{$1}{$2}", auto: true, desc: "fraction (LaTeX Suite style)" },
-  sq: { body: "\\sqrt{$1}", desc: "square root" },
-  int: { body: "\\int_{$1}^{$2}", desc: "definite integral" },
-  iint: { body: "\\int $1 \\, d$2", desc: "indefinite integral" },
-  sum: { body: "\\sum_{i=1}^{n} $1", desc: "sum" },
-  prod: { body: "\\prod_{i=1}^{n} $1", desc: "product" },
-  lim: { body: "\\lim_{$1 \\to $2}", desc: "limit" },
-  par: { body: "\\frac{\\partial $1}{\\partial $2}", desc: "partial derivative" },
-  sub: { body: "_{$1}", desc: "subscript" },
-  sup: { body: "^{$1}", desc: "superscript" },
-  vec: { body: "\\vec{$1}", desc: "vector" },
-  bar: { body: "\\bar{$1}", desc: "sample mean" },
-  hat: { body: "\\hat{$1}", desc: "estimator" },
-  til: { body: "\\tilde{$1}", desc: "tilde" },
-  bb: { body: "\\mathbb{$1}", desc: "blackboard bold" },
-  cal: { body: "\\mathcal{$1}", desc: "calligraphic" },
-  op: { body: "\\operatorname{$1}", desc: "operator name" },
-  alp: { body: "\\alpha" },
-  bet: { body: "\\beta" },
-  gam: { body: "\\gamma" },
-  del: { body: "\\delta" },
-  eps: { body: "\\varepsilon" },
-  the: { body: "\\theta" },
-  lam: { body: "\\lambda" },
-  mu: { body: "\\mu" },
-  sig: { body: "\\sigma" },
-  rho: { body: "\\rho" },
-  phi: { body: "\\varphi" },
-  omg: { body: "\\omega" },
-  Om: { body: "\\Omega" },
-  Sig: { body: "\\Sigma" },
-  to: { body: "\\to" },
-  inf: { body: "\\infty" },
-  cd: { body: "\\cdot" },
-  leq: { body: "\\leq" },
-  geq: { body: "\\geq" },
-  neq: { body: "\\neq" },
-  pm: { body: "\\pm" },
-  tms: { body: "\\times" },
-  inn: { body: "\\in" },
-  RR: { body: "\\mathbb{R}" },
-  EE: { body: "\\mathbb{E}" },
-  VV: { body: "\\operatorname{Var}" },
-  CC: { body: "\\operatorname{Cov}" },
-  NN: { body: "\\mathcal{N}" }
+  mk: { body: "$$0$", auto: true, open: true, desc: "inline math" },
+  dm: { body: "$$\n$0\n$$", auto: true, open: true, word: true, desc: "display math" },
+  ff: { body: "\\frac{$0}{$1}$2", auto: true, desc: "fraction" },
+  "//": { body: "\\frac{$0}{$1}$2", auto: true, desc: "fraction" },
+  sq: { body: "\\sqrt{ $0 }$1", auto: true, desc: "square root" },
+  int: { body: "\\int_{$0}^{$1} $2 \\, d$3", auto: true, desc: "definite integral" },
+  iint: { body: "\\iint", auto: true, desc: "double integral" },
+  sum: { body: "\\sum_{i=1}^{n} $1", auto: true, desc: "sum" },
+  prod: { body: "\\prod_{i=1}^{n} $1", auto: true, desc: "product" },
+  lim: { body: "\\lim_{ $0 \\to $1 } $2", auto: true, desc: "limit" },
+  par: { body: "\\frac{ \\partial $0 }{ \\partial $1 } $2", desc: "partial derivative (Tab: LaTeX Suite leaves this one on Tab)" },
+  sub: { body: "_{$0}$1", auto: true, desc: "subscript" },
+  sup: { body: "^{$0}$1", auto: true, desc: "superscript" },
+  vec: { body: "\\vec{$0}$1", auto: true, desc: "vector" },
+  bar: { body: "\\bar{$0}$1", auto: true, desc: "sample mean" },
+  hat: { body: "\\hat{$0}$1", auto: true, desc: "estimator" },
+  til: { body: "\\tilde{$0}$1", auto: true, desc: "tilde" },
+  bb: { body: "\\mathbb{$1}", auto: true, desc: "blackboard bold" },
+  cal: { body: "\\mathcal{$1}", auto: true, desc: "calligraphic" },
+  op: { body: "\\operatorname{$1}", auto: true, desc: "operator name" },
+  alp: { body: "\\alpha", auto: true },
+  bet: { body: "\\beta", auto: true },
+  gam: { body: "\\gamma", auto: true },
+  del: { body: "\\delta", auto: true, desc: "delta (nabl is the gradient)" },
+  eps: { body: "\\varepsilon", auto: true },
+  the: { body: "\\theta", auto: true },
+  lam: { body: "\\lambda", auto: true },
+  mu: { body: "\\mu", auto: true },
+  sig: { body: "\\sigma", auto: true },
+  rho: { body: "\\rho", auto: true },
+  phi: { body: "\\varphi", auto: true },
+  omg: { body: "\\omega", auto: true },
+  Om: { body: "\\Omega", auto: true },
+  Sig: { body: "\\Sigma", auto: true },
+  to: { body: "\\to", auto: true },
+  inf: { body: "\\infty", auto: true },
+  cd: { body: "\\cdot", auto: true },
+  leq: { body: "\\leq", auto: true },
+  geq: { body: "\\geq", auto: true },
+  neq: { body: "\\neq", auto: true },
+  pm: { body: "\\pm", auto: true },
+  tms: { body: "\\times", auto: true },
+  inn: { body: "\\in", auto: true },
+  RR: { body: "\\mathbb{R}", auto: true },
+  EE: { body: "\\mathbb{E}", auto: true },
+  VV: { body: "\\operatorname{Var}", auto: true },
+  CC: { body: "\\operatorname{Cov}", auto: true },
+  NN: { body: "\\mathcal{N}", auto: true },
+  "@a": { body: "\\alpha", auto: true },
+  "@b": { body: "\\beta", auto: true },
+  "@g": { body: "\\gamma", auto: true },
+  "@G": { body: "\\Gamma", auto: true },
+  "@d": { body: "\\delta", auto: true },
+  "@D": { body: "\\Delta", auto: true },
+  "@e": { body: "\\epsilon", auto: true },
+  ":e": { body: "\\varepsilon", auto: true },
+  "@z": { body: "\\zeta", auto: true },
+  "@t": { body: "\\theta", auto: true },
+  "@T": { body: "\\Theta", auto: true },
+  ":t": { body: "\\vartheta", auto: true },
+  "@i": { body: "\\iota", auto: true },
+  "@k": { body: "\\kappa", auto: true },
+  "@l": { body: "\\lambda", auto: true },
+  "@L": { body: "\\Lambda", auto: true },
+  "@s": { body: "\\sigma", auto: true },
+  "@S": { body: "\\Sigma", auto: true },
+  "@u": { body: "\\upsilon", auto: true },
+  "@U": { body: "\\Upsilon", auto: true },
+  "@o": { body: "\\omega", auto: true },
+  "@O": { body: "\\Omega", auto: true },
+  ome: { body: "\\omega", auto: true },
+  Ome: { body: "\\Omega", auto: true },
+  text: { body: "\\text{$0}$1", auto: true },
+  sr: { body: "^{2}", auto: true },
+  cb: { body: "^{3}", auto: true },
+  rd: { body: "^{$0}$1", auto: true },
+  _: { body: "_{$0}$1", auto: true },
+  sts: { body: "_\\text{$0}", auto: true },
+  invs: { body: "^{-1}", auto: true },
+  conj: { body: "^{*}", auto: true },
+  Re: { body: "\\mathrm{Re}", auto: true },
+  Im: { body: "\\mathrm{Im}", auto: true },
+  bf: { body: "\\mathbf{$0}", auto: true },
+  rm: { body: "\\mathrm{$0}$1", auto: true },
+  trace: { body: "\\mathrm{Tr}", auto: true },
+  dot: { body: "\\dot{$0}$1", auto: true },
+  ddot: { body: "\\ddot{$0}$1", auto: true },
+  cdot: { body: "\\cdot", auto: true },
+  tilde: { body: "\\tilde{$0}$1", auto: true },
+  und: { body: "\\underline{$0}$1", auto: true },
+  pmod: { body: "\\pmod{$0}$1", auto: true },
+  ooo: { body: "\\infty", auto: true },
+  "\\sum": { body: "\\sum_{$0=$1}^{$2} $3" },
+  "\\prod": { body: "\\prod_{$0=$1}^{$2} $3" },
+  "+-": { body: "\\pm", auto: true },
+  "-+": { body: "\\mp", auto: true },
+  "...": { body: "\\dots", auto: true },
+  xx: { body: "\\times", auto: true },
+  "**": { body: "\\cdot", auto: true },
+  para: { body: "\\parallel", auto: true },
+  deg: { body: "\\degree", auto: true },
+  "===": { body: "\\equiv", auto: true },
+  "!=": { body: "\\neq", auto: true },
+  ">=": { body: "\\geq", auto: true },
+  "<=": { body: "\\leq", auto: true },
+  ">>": { body: "\\gg", auto: true },
+  "<<": { body: "\\ll", auto: true },
+  simm: { body: "\\sim", auto: true },
+  "sim=": { body: "\\simeq", auto: true },
+  prop: { body: "\\propto", auto: true },
+  "<->": { body: "\\leftrightarrow ", auto: true },
+  "->": { body: "\\to", auto: true },
+  "!>": { body: "\\mapsto", auto: true },
+  "=>": { body: "\\implies", auto: true },
+  "=<": { body: "\\impliedby", auto: true },
+  and: { body: "\\cap", auto: true, word: true },
+  orr: { body: "\\cup", auto: true },
+  notin: { body: "\\not\\in", auto: true },
+  "sub=": { body: "\\subseteq", auto: true },
+  "sup=": { body: "\\supseteq", auto: true },
+  eset: { body: "\\emptyset", auto: true },
+  set: { body: "\\{ $0 \\}$1", auto: true, word: true },
+  LL: { body: "\\mathcal{L}", auto: true },
+  HH: { body: "\\mathcal{H}", auto: true },
+  ZZ: { body: "\\mathbb{Z}", auto: true },
+  QQ: { body: "\\mathbb{Q}", auto: true },
+  ddt: { body: "\\frac{d}{dt} ", auto: true },
+  "\\int": { body: "\\int $0 \\, d$1 $2" },
+  dint: { body: "\\int_{$0}^{$1} $2 \\, d$3 $4", auto: true },
+  oint: { body: "\\oint", auto: true },
+  iiint: { body: "\\iiint", auto: true },
+  oinf: { body: "\\int_{0}^{\\infty} $0 \\, d$1 $2", auto: true },
+  infi: { body: "\\int_{-\\infty}^{\\infty} $0 \\, d$1 $2", auto: true },
+  "o+": { body: "\\oplus ", auto: true },
+  ox: { body: "\\otimes ", auto: true, word: true },
+  avg: { body: "\\langle $0 \\rangle $1", auto: true },
+  norm: { body: "\\lvert $0 \\rvert $1", auto: true },
+  Norm: { body: "\\lVert $0 \\rVert $1", auto: true },
+  ceil: { body: "\\lceil $0 \\rceil $1", auto: true },
+  floor: { body: "\\lfloor $0 \\rfloor $1", auto: true },
+  nabl: { body: "\\nabla", auto: true, desc: "gradient" },
+  inti: { body: "\\int $0 \\, d$1", auto: true, desc: "indefinite integral" }
 }
 
 //#region Pure helpers
@@ -215,6 +309,26 @@ function literalBoundaryOk(text, start, token) {
   return true
 }
 
+/** Same word-character test the shell uses for its own trigger boundaries. */
+var WORD_CHAR = /\p{L}|\p{N}|_/u
+
+/**
+ * LaTeX Suite's `w` option: the trigger has to sit between word delimiters.
+ *
+ * Only the far side needs checking — a bare-word trigger's near side is already
+ * whole-word matched — so this is what keeps `dm` from firing inside `dmx`. The
+ * end of the draft counts as a delimiter, which is the common case while typing:
+ * `dm` at the end of a line is display math, `dms` is a word.
+ *
+ * @param text - the projected composer text.
+ * @param caret - caret offset, i.e. the offset just past the trigger.
+ * @returns whether the trigger is followed by a delimiter.
+ */
+function wordBoundaryOk(text, caret) {
+  if (caret >= text.length) return true
+  return !WORD_CHAR.test(text.charAt(caret))
+}
+
 /**
  * The literal trigger ending at the caret, if the table has one.
  *
@@ -269,11 +383,15 @@ function matchTrigger(text, caret, table) {
 /**
  * Split one snippet body into its text, its holes, and what sits between them.
  *
- * `$1`, `$2` … mark holes. Tab lands in the lowest-numbered one first and then
- * walks the rest in order, so a bare `$0` — LaTeX Suite's "final position" — is
- * ordered last. The strip between two consecutive holes is what the Tab walk
- * searches for to find the next hole after the user has typed in the current
- * one, which is why it is returned alongside the offsets.
+ * `$0`, `$1`, `$2` … mark holes and Tab visits them in numeric order, exactly as
+ * LaTeX Suite numbers its tabstops — `\frac{$0}{$1}$2` lands in the numerator,
+ * then the denominator, then after the fraction. LaTeX Suite's placeholder form
+ * `${0:\infty}` parses too, with the default text dropped: honouring it would
+ * need a selection to type over, and the shell publishes no selection seam.
+ *
+ * The strip between two consecutive holes is what the Tab walk searches for to
+ * find the next hole after the user has typed in the current one, which is why
+ * it is returned alongside the offsets.
  *
  * @param body - snippet body.
  * @returns `{ text, hole, stops, separators }`; `hole` is the first stop (an
@@ -282,7 +400,7 @@ function matchTrigger(text, caret, table) {
  */
 function parseBody(body) {
   var source = typeof body === "string" ? body : ""
-  var marker = /\$(\d+)|\$\{(\d+)\}/g
+  var marker = /\$(\d+)|\$\{(\d+)(?::[^}]*)?\}/g
   var text = ""
   var holes = []
   var last = 0
@@ -298,14 +416,20 @@ function parseBody(body) {
   text += source.slice(last)
   if (holes.length === 0) return { text: text, hole: null, stops: [], separators: [] }
 
-  var ordered = holes.slice().sort(function (left, right) {
-    var leftRank = left.number === 0 ? Number.MAX_SAFE_INTEGER : left.number
-    var rightRank = right.number === 0 ? Number.MAX_SAFE_INTEGER : right.number
-    return leftRank - rightRank
-  })
+  var ordered = holes.slice().sort(function (left, right) { return left.number - right.number })
   var stops = ordered.map(function (entry) { return entry.offset })
+
+  // The walk searches forward for each separator, so it only means anything when
+  // the tabstop order runs left to right. A body that numbers its holes out of
+  // order gets no walk rather than a wrong one.
   var separators = []
-  for (var i = 0; i + 1 < stops.length; i += 1) separators.push(text.slice(stops[i], stops[i + 1]))
+  for (var i = 0; i + 1 < stops.length; i += 1) {
+    if (stops[i] >= stops[i + 1]) {
+      separators = []
+      break
+    }
+    separators.push(text.slice(stops[i], stops[i + 1]))
+  }
   return { text: text, hole: stops[0], stops: stops, separators: separators }
 }
 
@@ -469,6 +593,9 @@ function handleKeydown(event, deps) {
   var match = matchTrigger(state.detectText, state.caret, deps.table)
   var snippet = match === null ? undefined : deps.table[match.token]
   if (snippet !== null && snippet !== undefined && typeof snippet.body === "string") {
+    if (snippet.word === true && !wordBoundaryOk(state.detectText, state.caret)) snippet = undefined
+  }
+  if (snippet !== null && snippet !== undefined && typeof snippet.body === "string") {
     if (snippet.open === true || insideMath(state.detectText, match.start)) {
       if (!expand(state, match, snippet, deps)) return false
       consume(event)
@@ -511,6 +638,7 @@ function handleKeyup(event, deps) {
   var snippet = deps.table[match.token]
   if (snippet === null || snippet === undefined || typeof snippet.body !== "string") return false
   if (snippet.auto !== true) return false
+  if (snippet.word === true && !wordBoundaryOk(state.detectText, state.caret)) return false
   if (snippet.open !== true && !insideMath(state.detectText, match.start)) return false
   return expand(state, match, snippet, deps)
 }

@@ -189,10 +189,23 @@ test('every hole is listed in Tab order, with the strips between them', () => {
   assert.equal(parsed.hole, 6, 'the walk starts at the first stop')
 })
 
-test('a bare $0 is the last stop, LaTeX Suite style', () => {
-  const parsed = parseBody('\\left($1\\right)$0')
-  assert.deepEqual(Array.from(parsed.stops), [6, 13])
-  assert.deepEqual(Array.from(parsed.separators), ['\\right)'])
+test('$0 is the first stop, LaTeX Suite style', () => {
+  const parsed = parseBody('\\frac{$0}{$1}$2')
+  assert.equal(parsed.hole, 6, 'the caret lands in the numerator')
+  assert.deepEqual(Array.from(parsed.stops), [6, 8, 9])
+  assert.deepEqual(Array.from(parsed.separators), ['}{', '}'])
+})
+
+test('a ${0:default} placeholder parses, with the default dropped', () => {
+  const parsed = parseBody('\\int_{${0:0}}^{${1:\\infty}} $2 \\, d$3')
+  assert.equal(parsed.text, '\\int_{}^{}  \\, d')
+  assert.deepEqual(Array.from(parsed.stops), [6, 9, 11, 16])
+})
+
+test('a body that numbers its holes out of order gets no walk', () => {
+  const parsed = parseBody('$1 + $0')
+  assert.deepEqual(Array.from(parsed.stops), [3, 0], 'numeric order runs the offsets backwards')
+  assert.deepEqual(Array.from(parsed.separators), [])
 })
 
 test('a hole-free body has no stops', () => {
@@ -475,21 +488,27 @@ test('the walk survives an edit of any length in the hole', () => {
   assert.equal(composer.text[composer.caret], '}')
 })
 
-test('the walk covers every hole and then stops', () => {
+test('the walk visits every hole and then stops', () => {
+  // A body pinned here rather than read from the shipped table, so tuning the
+  // table cannot quietly rewrite what this asserts.
+  const table = { int: { body: '\\int_{$0}^{$1}$2', auto: true } }
   const composer = makeComposer('$int', 4)
-  pressTab(composer)
+  pressTab(composer, table)
   assert.equal(composer.text, '$\\int_{}^{}')
   assert.equal(composer.caret, 7, 'lower limit')
   composer.type('0')
-  pressTab(composer)
+  pressTab(composer, table)
   assert.equal(composer.caret, 11, 'upper limit')
   assert.equal(composer.text[composer.caret - 1], '{')
+  assert.equal(composer.text[composer.caret], '}')
   composer.type('1')
   assert.equal(composer.text, '$\\int_{0}^{1}')
-  const result = pressTab(composer)
-  assert.equal(result.consumed, false, 'the second hole was the last one')
+  const third = pressTab(composer, table)
+  assert.equal(third.consumed, true, 'the trailing stop sits outside the closing brace')
+  assert.equal(composer.caret, 13)
+  const result = pressTab(composer, table)
+  assert.equal(result.consumed, false, 'the walk is over')
   assert.equal(result.prevented, false, 'Tab is free again')
-  assert.equal(composer.caret, 12)
 })
 
 test('a trigger typed inside a hole still expands', () => {
@@ -561,12 +580,28 @@ test('auto waits until the composer phase is plain', () => {
   assert.equal(composer.text, '$//')
 })
 
-test('auto is opt-in: a word trigger without the flag waits for Tab', () => {
-  const composer = makeComposer('$sum', 4)
-  assert.equal(pressKey(composer, 'm'), false)
-  assert.equal(composer.text, '$sum')
-  assert.equal(pressTab(composer).consumed, true)
-  assert.equal(composer.text, '$\\sum_{i=1}^{n} ')
+test('auto is the default, and only the four LaTeX Suite keeps on Tab wait', () => {
+  const sum = makeComposer('$sum', 4)
+  assert.equal(pressKey(sum, 'm'), true, 'sum is an auto snippet')
+  assert.equal(sum.text, '$\\sum_{i=1}^{n} ')
+
+  const par = makeComposer('$par', 4)
+  assert.equal(pressKey(par, 'r'), false, 'par needs Tab, exactly as in LaTeX Suite')
+  assert.equal(par.text, '$par')
+  assert.equal(pressTab(par).consumed, true)
+  assert.equal(par.text, '$\\frac{ \\partial  }{ \\partial  } ')
+})
+
+test('a word-boundary snippet does not fire inside a longer word', () => {
+  const inside = makeComposer('dmx', 2)
+  assert.equal(pressKey(inside, 'm'), false, 'the following x makes dm a word, not display math')
+  assert.equal(inside.text, 'dmx')
+  assert.equal(pressTab(inside).consumed, false, 'and Tab agrees')
+
+  const atEnd = makeComposer('dm', 2)
+  assert.equal(pressKey(atEnd, 'm'), true, 'at the end of the draft it is display math')
+  assert.equal(atEnd.text, '$$\n\n$$')
+  assert.equal(atEnd.caret, 3, 'caret on the empty line')
 })
 
 test('auto ignores modifiers, composition, and non-character keys', () => {
@@ -624,13 +659,19 @@ test('the seat degrades to no props when the session has no scope', () => {
 
 test('the default table is self-consistent', () => {
   for (const [tag, snippet] of Object.entries(DEFAULT_SNIPPETS)) {
-    assert.ok(/^([A-Za-z][A-Za-z0-9]*|[^A-Za-z0-9]+)$/.test(tag), `trigger "${tag}" must be a bare word or a literal run`)
+    // A bare word is matched as a whole word; anything else is a literal run
+    // (LaTeX Suite spells Greek `@a`, powers `sr`, fractions `//`), so a tag
+    // only has to avoid whitespace and the hole marker.
+    assert.ok(/^[^\s$]+$/.test(tag), `trigger "${tag}" must be a bare word or a literal run`)
     assert.ok(tag.length <= mod.internals.MAX_TRIGGER, `trigger "${tag}" must fit the cap`)
     assert.equal(typeof snippet.body, 'string')
     if (snippet.auto !== undefined) assert.equal(snippet.auto, true, `snippet "${tag}" auto is a boolean flag`)
     const parsed = parseBody(snippet.body)
     assert.ok(parsed.text.length > 0, `snippet "${tag}" expands to something`)
   }
+  assert.equal(DEFAULT_SNIPPETS.par.auto, undefined, 'par stays on Tab, as in LaTeX Suite')
+  assert.equal(DEFAULT_SNIPPETS.sum.auto, true, 'sum expands as it is typed')
+  assert.equal(DEFAULT_SNIPPETS.dm.word, true, 'dm needs a delimiter after it')
   assert.equal(parseBody(DEFAULT_SNIPPETS.ff.body).hole, 6)
   assert.equal(parseBody(DEFAULT_SNIPPETS.mk.body).text, '$$')
 })
